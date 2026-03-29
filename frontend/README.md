@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tic Tac Toe Premium
 
-## Getting Started
+A modern Tic Tac Toe game built with Next.js, featuring:
 
-First, run the development server:
+- 🤖 **vs AI** mode (Easy / Medium / Hard)
+- 👥 **Local Play** (2 players on one device)
+- 🌐 **Online Multiplayer** with room codes
+- ✨ Responsive modern UI with smooth game flow
+
+## Live Demo
+
+🔗 https://tic-tac-toe-premium-nextjs-nodejs.vercel.app/
+
+## Tech Stack
+
+- **Frontend:** Next.js (App Router), React, TypeScript
+- **Backend API:** Next.js Route Handlers (`/api/game`, `/api/health`)
+- **Deployment:** Vercel
+
+## API Endpoints
+
+- `GET /api/health` → service health status
+- `GET /api/game?action=health` → game service health
+- `POST /api/game` → game actions (`create_room`, `join_room`, `make_move`, etc.)
+
+## Local Development
 
 ```bash
+cd frontend
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open: `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The app is deployed on Vercel and serves both frontend and backend from the same project.
 
-## Learn More
+## Repository Structure
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `frontend/` → main app (UI + API routes)
+- `backend/` → old standalone backend (kept for reference)

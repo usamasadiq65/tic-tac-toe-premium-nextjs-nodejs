@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { useSocket } from '@/hooks/useSocket';
 import { Menu } from '@/components/Menu';
 import { GameView } from '@/components/GameView';
@@ -21,35 +21,19 @@ export default function Home() {
     startVsAI,
     requestAIMove,
     clearError,
-    setRoom,
     leaveRoom,
   } = useSocket();
 
   const [appState, setAppState] = useState<AppState>('menu');
   const [mySymbol, setMySymbol] = useState<'X' | 'O' | null>(null);
   const [localRoom, setLocalRoom] = useState<Room | null>(null);
-  const [socketId, setSocketId] = useState<string | null>(null);
 
-  // Track socket ID for online mode
-  useEffect(() => {
-    // We can infer socketId from room players
-    if (room && room.players.length > 0) {
-      // Don't need explicit socketId tracking as we compare via room
-    }
-  }, [room]);
-
-  // Transition states based on room changes
-  useEffect(() => {
-    if (!room) return;
-
-    if (appState === 'menu') return;
-
-    if (room.status === 'waiting' && appState !== 'waiting') {
-      setAppState('waiting');
-    } else if (room.status === 'playing' && appState === 'waiting') {
-      setAppState('playing-online');
-    }
-  }, [room, appState]);
+  const resolvedAppState: AppState =
+    appState === 'waiting' && room?.status === 'playing'
+      ? 'playing-online'
+      : appState === 'playing-online' && room?.status === 'waiting'
+        ? 'waiting'
+        : appState;
 
   // ============ Handlers ============
 
@@ -67,8 +51,8 @@ export default function Home() {
 
   function handleJoinRoom(roomId: string, name: string) {
     setMySymbol('O');
+    setAppState('playing-online');
     joinRoom(roomId, name);
-    // State will update when game_start fires
   }
 
   function handleLocalPlay(name1: string, name2: string) {
@@ -149,21 +133,21 @@ export default function Home() {
     });
   }
 
-  const handleMove = useCallback((index: number) => {
-    if (appState === 'playing-local') {
+  function handleMove(index: number) {
+    if (resolvedAppState === 'playing-local') {
       handleLocalMove(index);
     } else if (room?.id) {
       makeMove(room.id, index);
     }
-  }, [appState, room, makeMove, localRoom]);
+  }
 
-  const handleRematch = useCallback(() => {
-    if (appState === 'playing-local') {
+  function handleRematch() {
+    if (resolvedAppState === 'playing-local') {
       handleLocalRematch();
     } else if (room?.id) {
       requestRematch(room.id);
     }
-  }, [appState, room, requestRematch, localRoom]);
+  }
 
   function handleLeave() {
     leaveRoom();
@@ -173,23 +157,16 @@ export default function Home() {
     clearError();
   }
 
-  const handleAIMove = useCallback(() => {
+  function handleAIMove() {
     if (room?.id) {
       requestAIMove(room.id);
     }
-  }, [room, requestAIMove]);
-
-  // After join room, game starts
-  useEffect(() => {
-    if (room?.status === 'playing' && appState === 'menu') {
-      setAppState('playing-online');
-    }
-  }, [room, appState]);
+  }
 
   // ============ Render ============
 
-  const activeRoom = appState === 'playing-local' ? localRoom : room;
-  const isAI = appState === 'playing-ai';
+  const activeRoom = resolvedAppState === 'playing-local' ? localRoom : room;
+  const isAI = resolvedAppState === 'playing-ai';
 
   return (
     <main className="page-wrapper">
@@ -226,7 +203,7 @@ export default function Home() {
       )}
 
       {/* Menu */}
-      {appState === 'menu' && (
+      {resolvedAppState === 'menu' && (
         <Menu
           onStartAI={handleStartAI}
           onCreateRoom={handleCreateRoom}
@@ -237,12 +214,12 @@ export default function Home() {
       )}
 
       {/* Waiting Room */}
-      {appState === 'waiting' && room && (
+      {resolvedAppState === 'waiting' && room && (
         <WaitingRoom room={room} onLeave={handleLeave} />
       )}
 
       {/* Game */}
-      {(appState === 'playing-ai' || appState === 'playing-online' || appState === 'playing-local') && activeRoom && (
+      {(resolvedAppState === 'playing-ai' || resolvedAppState === 'playing-online' || resolvedAppState === 'playing-local') && activeRoom && (
         <GameView
           room={activeRoom}
           mySymbol={mySymbol}

@@ -40,4 +40,3 @@ The app is deployed on Vercel and serves both frontend and backend from the same
 ## Repository Structure
 
 - `frontend/` → main app (UI + API routes)
-- `backend/` → old standalone backend (kept for reference)

@@ -7,14 +7,21 @@ const { v4: uuidv4 } = require('uuid');
 const app = express();
 const server = http.createServer(app);
 
+const allowedOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:3000')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const corsOptions = {
+  origin: allowedOrigins,
+  methods: ['GET', 'POST'],
+};
+
 const io = new Server(server, {
-  cors: {
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST'],
-  },
+  cors: corsOptions,
 });
 
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // In-memory store
@@ -60,7 +67,14 @@ function createRoom(hostId, hostName) {
 function getRoomSafeData(room) {
   return {
     id: room.id,
-    players: room.players.map((p) => ({ id: p.id, name: p.name, symbol: p.symbol, score: p.score })),
+    players: room.players.map((p) => ({ 
+      id: p.id, 
+      name: p.name, 
+      symbol: p.symbol, 
+      score: p.score,
+      isAI: p.isAI || false,
+      difficulty: p.difficulty
+    })),
     board: room.board,
     currentTurn: room.currentTurn,
     status: room.status,

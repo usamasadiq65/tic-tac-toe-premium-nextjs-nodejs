@@ -128,7 +128,7 @@ io.on('connection', (socket) => {
       return;
     }
     if (room.players.length >= 2) {
-      socket.emit('error', { message: 'Room is full.' });
+      socket.emit('error', { message: 'Room is fulled.' });
       return;
     }
     if (!playerName || playerName.trim() === '') {

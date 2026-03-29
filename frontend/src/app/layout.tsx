@@ -5,6 +5,11 @@ export const metadata: Metadata = {
   title: "Tic Tac Toe – Play Online, vs AI, or Locally",
   description: "A beautiful, real-time multiplayer Tic Tac Toe game. Play versus AI with 3 difficulty levels, challenge a friend locally, or compete online with room codes.",
   keywords: ["tic tac toe", "online multiplayer", "game", "AI", "real-time"],
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
   openGraph: {
     title: "Tic Tac Toe",
     description: "Play Tic Tac Toe online, vs AI, or on the same device with a friend.",
